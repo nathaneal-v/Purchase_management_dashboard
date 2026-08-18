@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Purchase Order Form - Purchase Management ERP</title>
+  <link rel="stylesheet" href="assets/css/style.css">
+</head>
+<body>
+  <div class="app-container">
+    <aside id="sidebar-mount"></aside>
+
+    <div class="main-wrapper">
+      <header id="topbar-mount"></header>
+
+      <main class="content-area">
+        <form id="po-form" onsubmit="handlePOSubmit(event)">
+          <div class="page-header">
+            <div class="page-title-group">
+              <h1 id="form-title">Create Purchase Order</h1>
+              <p>Fill in order details, add items from catalog, and manage workflow status.</p>
+            </div>
+            <div>
+              <a href="purchase-orders.html" class="btn btn-secondary">Back to List</a>
+            </div>
+          </div>
+
+          <!-- 2-Column SaaS Layout Container -->
+          <div class="po-form-layout">
+            <!-- Left Primary Column (Order Header + Item Lines ~75-80%) -->
+            <div class="po-main-pane">
+              <!-- PO Header Fields Card -->
+              <div class="card">
+                <div class="card-header">
+                  <span class="card-title">1. Order Header Information</span>
+                  <span class="badge badge-draft" id="form-status-badge">Draft</span>
+                </div>
+                <div class="card-body">
+                  <div class="form-grid">
+                    <div class="form-group">
+                      <label class="form-label">Purchase Order Number</label>
+                      <input type="text" class="form-control" id="po-number" readonly placeholder="Auto-generated on save (e.g. PO-1004)">
+                    </div>
+
+                    <div class="form-group">
+                      <label class="form-label">PO Date <span class="required">*</span></label>
+                      <input type="date" class="form-control" id="po-date" required>
+                    </div>
+
+                    <div class="form-group">
+                      <label class="form-label">Supplier <span class="required">*</span></label>
+                      <select class="form-control" id="po-supplier" required onchange="onSupplierChange()">
+                        <option value="">-- Select Supplier --</option>
+                      </select>
+                    </div>
+
+                    <div class="form-group">
+                      <label class="form-label">Expected Delivery Date <span class="required">*</span></label>
+                      <input type="date" class="form-control" id="po-delivery-date" required>
+                    </div>
+                  </div>
+
+                  <div class="form-grid">
+                    <div class="form-group">
+                      <label class="form-label">Reference Number</label>
+                      <input type="text" class="form-control" id="po-reference" placeholder="e.g. REF-2026-901">
+                    </div>
+
+                    <div class="form-group">
+                      <label class="form-label">Payment Terms</label>
+                      <select class="form-control" id="po-payment-terms-select" onchange="onPaymentTermsSelectChange(this.value)">
+                        <option value="Net 15 Days">Net 15 Days</option>
+                        <option value="Net 30 Days" selected>Net 30 Days</option>
+                        <option value="Net 45 Days">Net 45 Days</option>
+                        <option value="Net 60 Days">Net 60 Days</option>
+                        <option value="Immediate / Due on Receipt">Immediate / Due on Receipt</option>
+                        <option value="50% Advance, 50% on Delivery">50% Advance, 50% on Delivery</option>
+                        <option value="CUSTOM">Custom Payment Terms...</option>
+                      </select>
+                      <input type="text" class="form-control" id="po-payment-terms" placeholder="Type custom payment terms..." value="Net 30 Days" style="margin-top: 6px; display: none;">
+                    </div>
+
+                    <div class="form-group">
+                      <label class="form-label">Delivery Location <span class="required">*</span></label>
+                      <select class="form-control" id="po-location-select" onchange="onLocationSelectChange(this.value)" required>
+                        <option value="">-- Select Delivery Location --</option>
+                        <option value="Main Warehouse, Gate 3">Main Warehouse, Gate 3</option>
+                        <option value="East Warehouse, Dock 4">East Warehouse, Dock 4</option>
+                        <option value="HQ Office - 4th Floor">HQ Office - 4th Floor</option>
+                        <option value="IT Operations Room">IT Operations Room</option>
+                        <option value="CUSTOM">Custom / Other Address...</option>
+                      </select>
+                      <input type="text" class="form-control" id="po-delivery-location" placeholder="Type custom delivery location..." style="margin-top: 6px; display: none;">
+                    </div>
+                  </div>
+
+                  <div class="form-group">
+                    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 4px; flex-wrap: wrap; gap: 8px;">
+                      <label class="form-label" style="margin-bottom: 0;">Notes / Instructions</label>
+                      <select class="form-control" id="note-template-select" style="width: auto; padding: 4px 8px; font-size: 12px;" onchange="applyNoteTemplate(this.value)">
+                        <option value="">⚡ Quick Note Templates...</option>
+                        <option value="Urgent handling required. Please notify warehouse manager 2 hours prior to delivery.">Urgent Delivery Notice</option>
+                        <option value="Standard receiving hours: Mon-Fri 8:00 AM - 4:00 PM. Gate 3 entry only.">Standard Receiving Hours</option>
+                        <option value="Fragile goods. Inspect outer packaging and sign delivery receipt before driver departure.">Fragile Goods Inspection</option>
+                        <option value="Deliver directly to IT Operations Room on 4th floor. Contact extension 4092.">IT Operations Delivery</option>
+                      </select>
+                    </div>
+                    <textarea class="form-control" id="po-notes" placeholder="Type custom handling instructions or select a quick template above..."></textarea>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Dynamic Line Items Section Card -->
+              <div class="card" id="items-card">
+                <div class="card-header" style="display: flex; justify-content: space-between; align-items: center; width: 100%;">
+                  <span class="card-title">2. Order Item Line Details</span>
+                  <button type="button" class="btn btn-outline btn-sm" id="add-item-btn" style="display: none; margin-left: auto;" onclick="addItemRow()">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                    Add Item Line
+                  </button>
+                </div>
+
+                <div id="no-supplier-notice" style="padding: 36px 24px; text-align: center; color: var(--text-muted); background: #f8fafc;">
+                  <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" style="color: var(--text-subtle); margin-bottom: 8px;"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+                  <h4 style="font-size: 14.5px; font-weight: 600; color: var(--text-main);">Please Select a Supplier Above</h4>
+                  <p style="font-size: 12.5px; margin-top: 4px; color: var(--text-muted);">Choose a supplier in Section 1 to unlock catalog items and build your order line details.</p>
+                </div>
+
+                <div class="card-body" id="items-table-wrapper" style="padding: 0; display: none;">
+                  <div class="table-container" style="border: none; border-radius: 0;">
+                    <table class="line-table">
+                      <thead>
+                        <tr>
+                          <th style="width: 24%;">Item Catalog <span class="required">*</span></th>
+                          <th style="width: 10%;">Code</th>
+                          <th style="width: 9%;">Qty <span class="required">*</span></th>
+                          <th style="width: 8%;">Unit</th>
+                          <th style="width: 11%;">Unit Price ($)</th>
+                          <th style="width: 17%;">Disc (Type / Val)</th>
+                          <th style="width: 8%;">Tax (%)</th>
+                          <th style="width: 10%; text-align: right;">Line Total ($)</th>
+                          <th style="width: 3%;"></th>
+                        </tr>
+                      </thead>
+                      <tbody id="line-items-body">
+                        <!-- Dynamic Rows Inserted Here -->
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Right Sticky Sidebar Column (Financial Summary & Workflow Actions ~20-25%) -->
+            <div class="po-sidebar-pane">
+              <div class="card summary-sidebar-card">
+                <div class="card-header">
+                  <span class="card-title">Financial Summary</span>
+                </div>
+                <div class="card-body">
+                  <div class="summary-row">
+                    <span>Subtotal</span>
+                    <span id="summary-subtotal">$0.00</span>
+                  </div>
+
+                  <div class="summary-row">
+                    <span>Total Discount</span>
+                    <span id="summary-discount" style="color: var(--danger);">-$0.00</span>
+                  </div>
+
+                  <div class="summary-row">
+                    <span>Total Tax</span>
+                    <span id="summary-tax">+$0.00</span>
+                  </div>
+
+                  <div class="summary-row" style="flex-direction: column; align-items: flex-start; gap: 4px;">
+                    <span style="font-size: 12px; font-weight: 500;">Additional Charges</span>
+                    <input type="number" step="0.01" min="0" class="form-control" id="additional-charges" value="0.00" style="text-align: right;" oninput="calculateTotals()" placeholder="0.00">
+                  </div>
+
+                  <div class="summary-row grand-total">
+                    <span>Grand Total</span>
+                    <span class="amount" id="summary-grand-total">$0.00</span>
+                  </div>
+
+                  <!-- Workflow Action Buttons Stack -->
+                  <div class="summary-action-stack">
+                    <button type="button" class="btn btn-primary" id="submit-po-btn" onclick="savePO('Pending')">Submit Order</button>
+                    <button type="button" class="btn btn-outline" id="draft-po-btn" onclick="savePO('Draft')">Save as Draft</button>
+                    <button type="button" class="btn btn-success" id="complete-po-btn" style="display:none; background-color: var(--success); color: white;" onclick="savePO('Completed')">Mark Completed</button>
+                    <button type="button" class="btn btn-danger" id="cancel-po-btn" style="display:none;" onclick="savePO('Cancelled')">Cancel Order</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </form>
+      </main>
+    </div>
+  </div>
+
+  <!-- Modal Popup Item Picker -->
+  <div class="modal-overlay" id="item-picker-modal" onclick="closeItemPickerModalOnBackdrop(event)">
+    <div class="modal glass-modal" style="max-width: 720px; width: 92%;">
+      <div class="modal-header" style="display:flex; justify-content:space-between; align-items:center;">
+        <h3 class="modal-title" style="display:flex; align-items:center; gap:8px;">
+          <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/></svg>
+          Select Item from Catalog
+        </h3>
+        <button type="button" class="modal-close" onclick="closeItemPickerModal()">✕</button>
+      </div>
+      <div class="modal-body" style="padding: 16px 20px;">
+        <!-- Modal Search Bar -->
+        <div class="search-box" style="margin-bottom: 16px; width: 100%;">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+          <input type="text" id="item-picker-search" placeholder="Search by Item Name, Code, or Category..." onkeyup="filterItemPickerModalList()">
+        </div>
+
+        <!-- Item List Table (Scrollable max-height 380px) -->
+        <div style="max-height: 380px; overflow-y: auto; border: 1px solid var(--border); border-radius: var(--radius-md);">
+          <table class="data-table" style="width: 100%; border-collapse: collapse;">
+            <thead style="position: sticky; top: 0; background: var(--surface); z-index: 2;">
+              <tr>
+                <th style="width: 18%;">Item Code</th>
+                <th style="width: 42%;">Item Name</th>
+                <th style="width: 15%;">Unit</th>
+                <th style="width: 15%;">Price ($)</th>
+                <th style="width: 10%; text-align: right;">Action</th>
+              </tr>
+            </thead>
+            <tbody id="item-picker-table-body">
+              <!-- Dynamically populated catalog items -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+      <div class="modal-footer" style="display:flex; justify-content:flex-end;">
+        <button type="button" class="btn btn-secondary" onclick="closeItemPickerModal()">Cancel</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="assets/js/toast.js"></script>
+  <script src="assets/js/sidebar.js"></script>
+  <script src="assets/js/purchase-order-form.js"></script>
+</body>
+</html>

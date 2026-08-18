@@ -83,12 +83,17 @@ app.all(['/backend/api/:file', '/api/:file'], (req, res) => {
   });
 });
 
-// Serve frontend static files
+// Serve static files from root and frontend
+app.use(express.static(__dirname));
 app.use(express.static(path.join(__dirname, 'frontend')));
 
 // Serve index.html for root route
 app.get('/', (req, res) => {
-  res.sendFile(path.join(__dirname, 'frontend', 'index.html'));
+  if (fs.existsSync(path.join(__dirname, 'index.html'))) {
+    res.sendFile(path.join(__dirname, 'index.html'));
+  } else {
+    res.sendFile(path.join(__dirname, 'frontend', 'index.html'));
+  }
 });
 
 function startServer(port) {

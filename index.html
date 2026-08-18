@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Purchase Dashboard - ProcurePulse ERP</title>
+  <link rel="stylesheet" href="assets/css/style.css">
+  <!-- FontAwesome Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <!-- Chart.js CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <!-- html2canvas CDN for Dashboard Image Export -->
+  <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
+</head>
+<body>
+  <div class="app-container">
+    <!-- Shared Sidebar -->
+    <aside id="sidebar-mount"></aside>
+
+    <!-- Main Content Wrapper -->
+    <div class="main-wrapper">
+      <!-- Shared Topbar -->
+      <header id="topbar-mount"></header>
+
+      <!-- Dashboard Content View Area -->
+      <main class="content-area" id="dashboard-capture-area">
+        <!-- Dashboard Header & Top Toolbar -->
+        <div class="page-header">
+          <div class="page-title-group">
+            <h1>Purchase Dashboard</h1>
+            <p>Real-time procurement metrics, order status tracking, and financial analytics.</p>
+          </div>
+
+          <div style="display:flex; gap:10px; align-items:center; flex-wrap:wrap;">
+            <!-- Command Palette Shortcut Hint -->
+            <button type="button" class="btn btn-outline" onclick="openCommandPalette()" title="Press Ctrl+K to search">
+              <i class="fa-solid fa-terminal"></i>
+              <span style="font-size:11px; font-weight:700; background:rgba(0,0,0,0.06); padding:2px 6px; border-radius:4px;">⌘K</span>
+            </button>
+
+            <!-- Export Image Button -->
+            <button type="button" class="btn btn-outline" id="export-dashboard-btn" onclick="exportDashboardAsImage()">
+              <i class="fa-solid fa-download"></i>
+              <span id="export-btn-text">Export</span>
+            </button>
+
+            <!-- Refresh Button -->
+            <button type="button" class="btn btn-outline" onclick="loadDashboardData(true)">
+              <svg id="refresh-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="transition: transform 0.5s ease;"><path d="M23 4v6h-6"/><path d="M1 20v-6h6"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg>
+              Refresh
+            </button>
+
+            <a href="purchase-order-form.html" class="btn btn-primary">
+              <i class="fa-solid fa-plus"></i>
+              Create Purchase Order
+            </a>
+          </div>
+        </div>
+
+        <!-- Dashboard Loading Spinner Overlay -->
+        <div id="dashboard-spinner" style="display:none; text-align:center; padding: 16px; color: var(--primary);">
+          <i class="fa-solid fa-circle-notch fa-spin fa-2x"></i>
+          <div style="font-size:12.5px; font-weight:600; margin-top:6px;">Updating Real-Time Procurement Metrics...</div>
+        </div>
+
+        <!-- Quick Stats & Actionable Alerts Banner Row -->
+        <div class="quick-stats-row">
+          <div class="quick-stat-card">
+            <span class="quick-stat-label">Total Procurement Spend</span>
+            <span class="quick-stat-val" id="stat-total-spend">$0.00</span>
+            <span class="quick-stat-sub"><i class="fa-solid fa-arrow-trend-up"></i> Completed Orders Total</span>
+          </div>
+
+          <div class="quick-stat-card">
+            <span class="quick-stat-label">Average Order Value</span>
+            <span class="quick-stat-val" id="stat-avg-value">$0.00</span>
+            <span class="quick-stat-sub"><i class="fa-solid fa-calculator"></i> Per Executed PO</span>
+          </div>
+
+          <div class="quick-stat-card">
+            <span class="quick-stat-label">Top Supplier Volume</span>
+            <span class="quick-stat-val" id="stat-top-supplier" style="font-size: 16px; margin-top: 4px;">-</span>
+            <span class="quick-stat-sub"><i class="fa-solid fa-building"></i> Primary Vendor Partner</span>
+          </div>
+
+          <!-- Actionable Alerts Panel (Glassmorphism styling) -->
+          <div class="alerts-glass-panel" id="dashboard-alerts-panel">
+            <div style="display:flex; align-items:center; gap:8px; font-weight:700; color:#d97706; font-size:13px;">
+              <i class="fa-solid fa-triangle-exclamation"></i> Actionable Procurement Alerts
+            </div>
+            <div id="alerts-content" style="font-size:12px; margin-top:4px; color: var(--text-muted);">
+              Loading action alerts...
+            </div>
+          </div>
+        </div>
+
+        <!-- Middle Section: 50% / 50% Nested 2-Column Row -->
+        <div class="dashboard-middle-row">
+          <!-- Left 50%: 2x2 Grid of KPI Cards -->
+          <div class="kpi-2col-grid">
+            <div class="kpi-card kpi-total clickable-kpi" id="kpi-card-total" onclick="applyDashboardFilter('all')" title="Click to filter table by All Orders">
+              <div class="kpi-card-top">
+                <div class="kpi-icon-wrapper">
+                  <i class="fa-solid fa-file-invoice"></i>
+                </div>
+                <div class="kpi-details">
+                  <span class="kpi-label">Total Purchase Orders</span>
+                  <span class="kpi-value counter-value" id="kpi-total" data-target="0">0</span>
+                </div>
+              </div>
+              <div class="sparkline-wrapper">
+                <canvas id="sparkline-total" height="28"></canvas>
+              </div>
+            </div>
+
+            <div class="kpi-card kpi-draft clickable-kpi" id="kpi-card-draft" onclick="applyDashboardFilter('draft')" title="Click to filter table by Draft Orders">
+              <div class="kpi-card-top">
+                <div class="kpi-icon-wrapper">
+                  <i class="fa-solid fa-pen-ruler"></i>
+                </div>
+                <div class="kpi-details">
+                  <span class="kpi-label">Draft Orders</span>
+                  <span class="kpi-value counter-value" id="kpi-draft" data-target="0">0</span>
+                </div>
+              </div>
+              <div class="sparkline-wrapper">
+                <canvas id="sparkline-draft" height="28"></canvas>
+              </div>
+            </div>
+
+            <div class="kpi-card kpi-pending clickable-kpi" id="kpi-card-pending" onclick="applyDashboardFilter('pending')" title="Click to filter table by Pending Orders">
+              <div class="kpi-card-top">
+                <div class="kpi-icon-wrapper">
+                  <i class="fa-solid fa-clock"></i>
+                </div>
+                <div class="kpi-details">
+                  <span class="kpi-label">Pending / Submitted</span>
+                  <span class="kpi-value counter-value" id="kpi-pending" data-target="0">0</span>
+                </div>
+              </div>
+              <div class="sparkline-wrapper">
+                <canvas id="sparkline-pending" height="28"></canvas>
+              </div>
+            </div>
+
+            <div class="kpi-card kpi-completed clickable-kpi" id="kpi-card-completed" onclick="applyDashboardFilter('completed')" title="Click to filter table by Completed Orders">
+              <div class="kpi-card-top">
+                <div class="kpi-icon-wrapper">
+                  <i class="fa-solid fa-circle-check"></i>
+                </div>
+                <div class="kpi-details">
+                  <span class="kpi-label">Completed Orders</span>
+                  <span class="kpi-value counter-value" id="kpi-completed" data-target="0">0</span>
+                </div>
+              </div>
+              <div class="sparkline-wrapper">
+                <canvas id="sparkline-completed" height="28"></canvas>
+              </div>
+            </div>
+          </div>
+
+          <!-- Right 50%: Chart Selection Panel Card -->
+          <div class="card glass-card">
+            <div class="card-header" style="flex-wrap:wrap; gap:10px;">
+              <span class="card-title">Analytics & Insights</span>
+              
+              <!-- Tab Selection Bar -->
+              <div class="chart-tab-bar">
+                <button type="button" class="chart-tab active" id="tab-status" onclick="switchChartTab('status')">Status Split</button>
+                <button type="button" class="chart-tab" id="tab-spend" onclick="switchChartTab('spend')">Monthly Spend</button>
+                <button type="button" class="chart-tab" id="tab-funnel" onclick="switchChartTab('funnel')">Conversion Funnel</button>
+              </div>
+            </div>
+            <div class="card-body chart-container-body" style="position: relative; min-height: 280px; display:flex; align-items:center; justify-content:center;">
+              <canvas id="activeAnalyticsChart" style="max-height: 260px; width: 100%;"></canvas>
+            </div>
+          </div>
+        </div>
+
+        <!-- Bottom Section: Full Width Recent Orders Table Card -->
+        <div class="card glass-card" style="margin-bottom: 28px;">
+          <div class="card-header" style="display:flex; justify-content:space-between; align-items:center; width:100%;">
+            <div style="display:flex; align-items:center; gap:10px;">
+              <span class="card-title">Recent Purchase Orders</span>
+              <span class="active-filter-tag" id="table-filter-tag" style="display:none;" onclick="clearDashboardFilter()">
+                Filter: <span id="active-filter-label">All</span> <i class="fa-solid fa-xmark"></i>
+              </span>
+            </div>
+            <a href="purchase-orders.html" class="btn btn-outline btn-sm" style="margin-left:auto;">
+              View All <i class="fa-solid fa-arrow-right" style="margin-left:4px; font-size:11px;"></i>
+            </a>
+          </div>
+          <div class="card-body" style="padding: 0;">
+            <div class="table-container" style="border: none; border-radius: 0;">
+              <table class="data-table">
+                <thead>
+                  <tr>
+                    <th>PO Number</th>
+                    <th>Date</th>
+                    <th>Supplier</th>
+                    <th>Grand Total</th>
+                    <th>Delivery & Timer</th>
+                    <th>Status</th>
+                    <th style="text-align: right;">Action</th>
+                  </tr>
+                </thead>
+                <tbody id="recent-po-body">
+                  <tr>
+                    <td colspan="7" style="text-align:center; padding: 24px; color: var(--text-muted);">
+                      Loading recent orders from backend...
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </main>
+    </div>
+  </div>
+
+  <!-- Global Command Palette Modal (Ctrl+K Spotlight Search) -->
+  <div class="command-palette-overlay" id="command-palette-overlay" onclick="closeCommandPalette(event)">
+    <div class="command-palette-modal">
+      <div class="command-palette-header">
+        <i class="fa-solid fa-magnifying-glass"></i>
+        <input type="text" id="command-search-input" placeholder="Type a PO Number (e.g. PO-1001), 'New Order', 'Pending', or 'Export'..." onkeyup="filterCommandResults()">
+        <span class="esc-badge">ESC</span>
+      </div>
+      <div class="command-palette-results" id="command-results-list">
+        <!-- Dynamic Spotlight Search Results -->
+      </div>
+      <div class="command-palette-footer">
+        <span><kbd>↑</kbd> <kbd>↓</kbd> to navigate</span>
+        <span><kbd>↵</kbd> to select</span>
+        <span><kbd>ESC</kbd> to close</span>
+      </div>
+    </div>
+  </div>
+
+  <script src="assets/js/toast.js"></script>
+  <script src="assets/js/sidebar.js"></script>
+  <script src="assets/js/dashboard.js"></script>
+</body>
+</html>
+
