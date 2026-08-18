@@ -4,18 +4,13 @@ node_modules
 .gitignore
 .gemini
 README.md
-/tmp
 *.log
 .DS_Store
+package-lock.json
 
-# Local-only files (not needed on Vercel)
+# Local dev server (not needed on Vercel)
 server.js
+
+# Duplicate directories (public/ has the production files)
 frontend/
 backend/
-/assets/
-/index.html
-/purchase-orders.html
-/purchase-order-form.html
-/suppliers.html
-/items.html
-package-lock.json
