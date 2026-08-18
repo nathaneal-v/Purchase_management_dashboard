@@ -7,3 +7,15 @@ README.md
 /tmp
 *.log
 .DS_Store
+
+# Local-only files (not needed on Vercel)
+server.js
+frontend/
+backend/
+assets/
+index.html
+purchase-orders.html
+purchase-order-form.html
+suppliers.html
+items.html
+package-lock.json

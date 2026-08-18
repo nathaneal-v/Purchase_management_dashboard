@@ -6,11 +6,7 @@
       "use": "vercel-php@0.7.1"
     },
     {
-      "src": "*.html",
-      "use": "@vercel/static"
-    },
-    {
-      "src": "assets/**",
+      "src": "public/**",
       "use": "@vercel/static"
     }
   ],
@@ -20,36 +16,8 @@
       "dest": "/api/$1"
     },
     {
-      "src": "/backend/api/(.*)",
-      "dest": "/api/$1"
-    },
-    {
-      "src": "/assets/(.*)",
-      "dest": "/assets/$1"
-    },
-    {
-      "src": "/index.html",
-      "dest": "/index.html"
-    },
-    {
-      "src": "/purchase-orders.html",
-      "dest": "/purchase-orders.html"
-    },
-    {
-      "src": "/purchase-order-form.html",
-      "dest": "/purchase-order-form.html"
-    },
-    {
-      "src": "/suppliers.html",
-      "dest": "/suppliers.html"
-    },
-    {
-      "src": "/items.html",
-      "dest": "/items.html"
-    },
-    {
-      "src": "/",
-      "dest": "/index.html"
+      "src": "/(.*)",
+      "dest": "/public/$1"
     }
   ]
 }

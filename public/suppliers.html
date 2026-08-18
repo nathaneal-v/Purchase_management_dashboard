@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Supplier Master - Purchase Management ERP</title>
+  <link rel="stylesheet" href="assets/css/style.css">
+</head>
+<body>
+  <div class="app-container">
+    <aside id="sidebar-mount"></aside>
+
+    <div class="main-wrapper">
+      <header id="topbar-mount"></header>
+
+      <main class="content-area">
+        <div class="page-header">
+          <div class="page-title-group">
+            <h1>Supplier Master</h1>
+            <p>Manage vendors, contact information, tax IDs, and default payment terms.</p>
+          </div>
+          <div>
+            <button class="btn btn-primary" onclick="openSupplierModal()">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+              Add New Supplier
+            </button>
+          </div>
+        </div>
+
+        <!-- Toolbar -->
+        <div class="toolbar">
+          <div style="display: flex; gap: 8px; align-items: center; flex-wrap: wrap;">
+            <div class="search-box" style="min-width: 260px;">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+              <input type="text" id="supplier-search" placeholder="Search suppliers by name, code, contact..." onkeyup="filterSuppliers()">
+            </div>
+            <select class="form-control" id="supplier-filter-select" style="width: 200px;" onchange="filterSuppliers()">
+              <option value="">All Suppliers</option>
+            </select>
+          </div>
+          <div class="topbar-pill">
+            <span id="supplier-count">0</span> Suppliers Loaded
+          </div>
+        </div>
+
+        <!-- Suppliers Datatable -->
+        <div class="table-container">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Supplier Code</th>
+                <th>Supplier Name</th>
+                <th>Contact Person</th>
+                <th>Phone & Email</th>
+                <th>Tax / VAT No.</th>
+                <th>Payment Terms</th>
+                <th>Status</th>
+                <th style="text-align: right;">Actions</th>
+              </tr>
+            </thead>
+            <tbody id="suppliers-table-body">
+              <tr>
+                <td colspan="8" style="text-align: center; padding: 24px; color: var(--text-muted);">
+                  Loading suppliers from backend...
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </main>
+    </div>
+  </div>
+
+  <!-- Supplier Form Modal -->
+  <div class="modal-overlay" id="supplier-modal">
+    <div class="modal">
+      <div class="modal-header">
+        <h3 class="modal-title" id="supplier-modal-title">Add New Supplier</h3>
+        <button class="modal-close" onclick="closeSupplierModal()">✕</button>
+      </div>
+      <form id="supplier-form" onsubmit="handleSupplierSubmit(event)">
+        <div class="modal-body">
+          <input type="hidden" id="supplier-id">
+
+          <div class="form-group" style="margin-bottom: 16px;">
+            <label class="form-label">Supplier Name <span class="required">*</span></label>
+            <input type="text" class="form-control" id="supplier-name" required placeholder="e.g. Apex Industrial Supplies Ltd">
+          </div>
+
+          <div class="form-grid">
+            <div class="form-group">
+              <label class="form-label">Contact Person <span class="required">*</span></label>
+              <input type="text" class="form-control" id="supplier-contact" required placeholder="e.g. Robert Vance">
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">Phone Number <span class="required">*</span></label>
+              <div style="display: flex; gap: 6px;">
+                <select class="form-control" id="supplier-phone-region" style="width: 105px; padding: 8px 6px; font-size: 13px;">
+                  <option value="+91">+91 (IN)</option>
+                  <option value="+1">+1 (US)</option>
+                  <option value="+44">+44 (UK)</option>
+                  <option value="+61">+61 (AU)</option>
+                  <option value="+49">+49 (DE)</option>
+                  <option value="+971">+971 (UAE)</option>
+                  <option value="+65">+65 (SG)</option>
+                  <option value="+81">+81 (JP)</option>
+                </select>
+                <input type="text" class="form-control" id="supplier-phone" required placeholder="98765 43210" style="flex:1;">
+              </div>
+            </div>
+          </div>
+
+          <div class="form-grid">
+            <div class="form-group">
+              <label class="form-label">Email Address</label>
+              <input type="email" class="form-control" id="supplier-email" placeholder="e.g. sales@apexindustrial.com">
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">Tax / VAT Number</label>
+              <input type="text" class="form-control" id="supplier-tax" placeholder="e.g. TAX-987654321">
+            </div>
+          </div>
+
+          <div class="form-grid">
+            <div class="form-group">
+              <label class="form-label">Payment Terms</label>
+              <select class="form-control" id="supplier-terms">
+                <option value="Net 15">Net 15</option>
+                <option value="Net 30" selected>Net 30</option>
+                <option value="Net 45">Net 45</option>
+                <option value="Net 60">Net 60</option>
+                <option value="Immediate">Immediate / Due on Receipt</option>
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">Status</label>
+              <select class="form-control" id="supplier-status">
+                <option value="Active" selected>Active</option>
+                <option value="Inactive">Inactive</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Address</label>
+            <textarea class="form-control" id="supplier-address" placeholder="Full business address..."></textarea>
+          </div>
+        </div>
+
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" onclick="closeSupplierModal()">Cancel</button>
+          <button type="submit" class="btn btn-primary" id="supplier-save-btn">Save Supplier</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Delete Confirm Modal -->
+  <div class="modal-overlay" id="delete-confirm-modal">
+    <div class="modal" style="max-width: 400px;">
+      <div class="modal-header">
+        <h3 class="modal-title">Confirm Deletion</h3>
+        <button class="modal-close" onclick="closeDeleteModal()">✕</button>
+      </div>
+      <div class="modal-body">
+        <p>Are you sure you want to delete supplier <strong id="delete-supplier-name"></strong>?</p>
+        <p style="color: var(--text-muted); font-size: 12.5px; margin-top: 6px;">This action cannot be undone.</p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" onclick="closeDeleteModal()">Cancel</button>
+        <button type="button" class="btn btn-danger" id="confirm-delete-btn">Delete</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="assets/js/toast.js"></script>
+  <script src="assets/js/sidebar.js"></script>
+  <script src="assets/js/suppliers.js"></script>
+</body>
+</html>
