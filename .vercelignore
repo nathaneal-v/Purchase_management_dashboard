@@ -12,10 +12,10 @@ README.md
 server.js
 frontend/
 backend/
-assets/
-index.html
-purchase-orders.html
-purchase-order-form.html
-suppliers.html
-items.html
+/assets/
+/index.html
+/purchase-orders.html
+/purchase-order-form.html
+/suppliers.html
+/items.html
 package-lock.json
