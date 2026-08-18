@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Purchase Orders - Purchase Management ERP</title>
+  <link rel="stylesheet" href="assets/css/style.css">
+  <!-- SheetJS XLSX Export Library CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+</head>
+<body>
+  <div class="app-container">
+    <aside id="sidebar-mount"></aside>
+
+    <div class="main-wrapper">
+      <header id="topbar-mount"></header>
+
+      <main class="content-area">
+        <div class="page-header">
+          <div class="page-title-group">
+            <h1>Purchase Orders</h1>
+            <p>Track, manage, and audit all purchase order transactions.</p>
+          </div>
+          <div style="display:flex; gap:12px; align-items:center;">
+            <button type="button" class="btn btn-outline" onclick="exportPurchaseOrdersExcel()" title="Download Purchase Orders Excel Document">
+              <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
+              Export Excel
+            </button>
+            <a href="purchase-order-form.html" class="btn btn-primary">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+              Create Purchase Order
+            </a>
+          </div>
+        </div>
+
+        <!-- Toolbar & Filter -->
+        <div class="toolbar">
+          <div style="display:flex; gap: 12px; align-items: center; flex-wrap: wrap;">
+            <div class="search-box">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+              <input type="text" id="po-search" placeholder="Search PO #, supplier, reference..." onkeyup="filterPOList()">
+            </div>
+            
+            <select class="form-control" id="status-filter" style="width: auto; min-width: 160px;" onchange="filterPOList()">
+              <option value="All">All Statuses</option>
+              <option value="Draft">Draft</option>
+              <option value="Pending">Pending / Submitted</option>
+              <option value="Completed">Completed</option>
+              <option value="Cancelled">Cancelled</option>
+            </select>
+          </div>
+
+          <div class="topbar-pill">
+            <span id="po-count">0</span> Orders Found
+          </div>
+        </div>
+
+        <!-- PO Datatable -->
+        <div class="table-container">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>PO Number</th>
+                <th>PO Date</th>
+                <th>Supplier</th>
+                <th>Delivery Date</th>
+                <th>Total Amount</th>
+                <th>Status</th>
+                <th>Created By</th>
+                <th style="text-align: right;">Actions</th>
+              </tr>
+            </thead>
+            <tbody id="po-table-body">
+              <tr>
+                <td colspan="8" style="text-align: center; padding: 24px; color: var(--text-muted);">
+                  Loading purchase orders from backend...
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </main>
+    </div>
+  </div>
+
+  <!-- PO Quick View Modal -->
+  <div class="modal-overlay" id="po-view-modal">
+    <div class="modal" style="max-width: 720px;">
+      <div class="modal-header">
+        <h3 class="modal-title">Purchase Order Details: <span id="view-po-id" style="color:var(--primary);"></span></h3>
+        <button class="modal-close" onclick="closePOViewModal()">✕</button>
+      </div>
+      <div class="modal-body" id="po-view-content">
+        <!-- Dynamically rendered PO content -->
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-danger" id="view-po-cancel-btn" style="display:none;">Cancel Order</button>
+        <button type="button" class="btn btn-secondary" onclick="closePOViewModal()">Close</button>
+        <a href="#" id="view-po-edit-btn" class="btn btn-primary">Edit Order</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- Delete Confirm Modal -->
+  <div class="modal-overlay" id="delete-po-modal">
+    <div class="modal" style="max-width: 400px;">
+      <div class="modal-header">
+        <h3 class="modal-title">Confirm Deletion</h3>
+        <button class="modal-close" onclick="closeDeletePOModal()">✕</button>
+      </div>
+      <div class="modal-body">
+        <p>Are you sure you want to delete Purchase Order <strong id="delete-po-id"></strong>?</p>
+        <p style="color: var(--text-muted); font-size: 12.5px; margin-top: 6px;">This record will be permanently deleted from the database.</p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" onclick="closeDeletePOModal()">Cancel</button>
+        <button type="button" class="btn btn-danger" id="confirm-delete-po-btn">Delete Order</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="assets/js/toast.js"></script>
+  <script src="assets/js/sidebar.js"></script>
+  <script src="assets/js/purchase-orders.js"></script>
+</body>
+</html>

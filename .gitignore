@@ -1,0 +1,10 @@
+/tmp/
+*.log
+*.cache
+.DS_Store
+vendor/
+composer.lock
+.vercel/
+.env
+.env.local
+node_modules/

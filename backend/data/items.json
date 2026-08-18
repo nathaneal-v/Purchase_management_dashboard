@@ -1,0 +1,106 @@
+[
+    {
+        "id": "ITM-101",
+        "name": "Heavy Duty Steel Fasteners (M8 x 50mm)",
+        "description": "High tensile grade 8.8 galvanized steel bolts.",
+        "category": "Hardware",
+        "unit": "Box",
+        "purchase_price": 45,
+        "tax": 18,
+        "status": "Active",
+        "discount_tiers": [
+            {
+                "min_qty": 5,
+                "discount_pct": 5
+            },
+            {
+                "min_qty": 10,
+                "discount_pct": 10
+            },
+            {
+                "min_qty": 25,
+                "discount_pct": 15
+            }
+        ]
+    },
+    {
+        "id": "ITM-103",
+        "name": "Cat6 Shielded Ethernet Cable (305m)",
+        "description": "Solid copper 23AWG high speed networking cable.",
+        "category": "Electronics",
+        "unit": "Roll",
+        "purchase_price": 180,
+        "tax": 18,
+        "status": "Active",
+        "discount_tiers": [
+            {
+                "min_qty": 4,
+                "discount_pct": 8
+            },
+            {
+                "min_qty": 10,
+                "discount_pct": 12
+            }
+        ]
+    },
+    {
+        "id": "ITM-104",
+        "name": "Industrial Safety Helmets - Yellow",
+        "description": "ABS hard hat with 6-point ratchet suspension.",
+        "category": "Safety Equipment",
+        "unit": "Pack",
+        "purchase_price": 75,
+        "tax": 5,
+        "status": "Active",
+        "discount_tiers": [
+            {
+                "min_qty": 5,
+                "discount_pct": 5
+            },
+            {
+                "min_qty": 15,
+                "discount_pct": 10
+            }
+        ]
+    },
+    {
+        "id": "ITM-105",
+        "name": "Laser Jet Toner Cartridge (Black)",
+        "description": "High yield print cartridge up to 10,000 pages.",
+        "category": "Office Supplies",
+        "unit": "Piece",
+        "purchase_price": 95.5,
+        "tax": 18,
+        "status": "Active",
+        "discount_tiers": [
+            {
+                "min_qty": 3,
+                "discount_pct": 5
+            },
+            {
+                "min_qty": 8,
+                "discount_pct": 12
+            }
+        ]
+    },
+    {
+        "id": "ITM-106",
+        "name": "Fiber Optic Patch Cord",
+        "description": "Multimode duplex fiber cable",
+        "category": "Electronics",
+        "unit": "Piece",
+        "purchase_price": 35,
+        "tax": 18,
+        "status": "Active",
+        "discount_tiers": [
+            {
+                "min_qty": 10,
+                "discount_pct": 10
+            },
+            {
+                "min_qty": 50,
+                "discount_pct": 20
+            }
+        ]
+    }
+]

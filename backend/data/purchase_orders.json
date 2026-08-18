@@ -1,0 +1,113 @@
+[
+    {
+        "id": "PO-1001",
+        "po_date": "2026-08-10",
+        "supplier_id": "SUP-101",
+        "supplier_name": "Apex Industrial Supplies Ltd",
+        "expected_delivery_date": "2026-08-25",
+        "reference_number": "REF-2026-0810",
+        "payment_terms": "Net 30",
+        "delivery_location": "Main Warehouse, Gate 3",
+        "notes": "Urgent order for project expansion phase 1.",
+        "status": "Cancelled",
+        "created_by": "Nathaneal",
+        "created_at": "2026-08-10 09:30:00",
+        "items": [
+            {
+                "item_id": "ITM-101",
+                "item_code": "ITM-101",
+                "item_name": "Heavy Duty Steel Fasteners (M8 x 50mm)",
+                "description": "High tensile grade 8.8 galvanized steel bolts.",
+                "quantity": 10,
+                "unit": "Box",
+                "unit_price": 45,
+                "discount": 45,
+                "tax": 18,
+                "line_total": 477.9
+            },
+            {
+                "item_id": "ITM-104",
+                "item_code": "ITM-104",
+                "item_name": "Industrial Safety Helmets - Yellow",
+                "description": "ABS hard hat with 6-point ratchet suspension.",
+                "quantity": 5,
+                "unit": "Pack",
+                "unit_price": 75,
+                "discount": 18.75,
+                "tax": 5,
+                "line_total": 374.06
+            }
+        ],
+        "subtotal": 825,
+        "total_discount": 63.75,
+        "total_tax": 90.71,
+        "additional_charges": 50,
+        "grand_total": 901.96
+    },
+    {
+        "id": "PO-1003",
+        "po_date": "2026-08-01",
+        "supplier_id": "SUP-102",
+        "supplier_name": "Global Tech Components",
+        "expected_delivery_date": "2026-08-15",
+        "reference_number": "PO-GTC-004",
+        "payment_terms": "Net 60",
+        "delivery_location": "IT Operations Room",
+        "notes": "Delivered and verified by IT team.",
+        "status": "Completed",
+        "created_by": "Nathaneal",
+        "created_at": "2026-08-01 11:00:00",
+        "items": [
+            {
+                "item_id": "ITM-103",
+                "item_code": "ITM-103",
+                "item_name": "Cat6 Shielded Ethernet Cable (305m)",
+                "description": "Solid copper 23AWG high speed networking cable.",
+                "quantity": 2,
+                "unit": "Roll",
+                "unit_price": 180,
+                "discount": 0,
+                "tax": 18,
+                "line_total": 424.8
+            }
+        ],
+        "subtotal": 360,
+        "total_discount": 0,
+        "total_tax": 64.8,
+        "additional_charges": 15,
+        "grand_total": 439.8
+    },
+    {
+        "id": "PO-1005",
+        "po_date": "2026-08-18",
+        "supplier_id": "SUP-101",
+        "supplier_name": "Apex Industrial Supplies Ltd",
+        "expected_delivery_date": "2026-08-28",
+        "reference_number": "REF-20260818-9999",
+        "payment_terms": "Net 30",
+        "delivery_location": "Main Warehouse, Gate 3",
+        "notes": "Test submission verification",
+        "status": "Pending",
+        "created_by": "Admin",
+        "created_at": "2026-08-18 05:10:54",
+        "items": [
+            {
+                "item_id": "ITM-101",
+                "item_code": "ITM-101",
+                "item_name": "Selected Item",
+                "description": "",
+                "quantity": 5,
+                "unit": "Piece",
+                "unit_price": 45,
+                "discount": 11.25,
+                "tax": 18,
+                "line_total": 252.23
+            }
+        ],
+        "subtotal": 225,
+        "total_discount": 11.25,
+        "total_tax": 38.48,
+        "additional_charges": 15,
+        "grand_total": 267.23
+    }
+]

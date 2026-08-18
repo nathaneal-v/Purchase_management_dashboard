@@ -1,0 +1,9 @@
+# Vercel Deployment Ignore List
+node_modules
+.git
+.gitignore
+.gemini
+README.md
+/tmp
+*.log
+.DS_Store

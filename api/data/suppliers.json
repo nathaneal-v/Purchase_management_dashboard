@@ -1,0 +1,35 @@
+[
+    {
+        "id": "SUP-101",
+        "name": "Apex Industrial Supplies Ltd",
+        "contact_person": "Robert Vance",
+        "phone": "+1 (555) 234-5678",
+        "email": "sales@apexindustrial.com",
+        "address": "100 Industrial Parkway, Suite 400, Chicago, IL",
+        "tax_number": "TAX-987654321",
+        "payment_terms": "Net 30",
+        "status": "Active"
+    },
+    {
+        "id": "SUP-103",
+        "name": "Pinnacle Office Solutions",
+        "contact_person": "David Miller",
+        "phone": "+1 (555) 345-6789",
+        "email": "orders@pinnacleoffice.com",
+        "address": "88 Commerce Boulevard, Austin, TX",
+        "tax_number": "TAX-456789123",
+        "payment_terms": "Net 15",
+        "status": "Active"
+    },
+    {
+        "id": "SUP-104",
+        "name": "Vanguard Tech Logistics",
+        "contact_person": "Sarah Jenkins",
+        "phone": "+1 (555) 999-1234",
+        "email": "sarah@vanguardtech.com",
+        "address": "",
+        "tax_number": "TAX-777000",
+        "payment_terms": "Net 30",
+        "status": "Active"
+    }
+]

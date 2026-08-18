@@ -1,0 +1,13 @@
+{
+  "name": "purchase-management-erp",
+  "version": "1.0.0",
+  "description": "ERP-style Purchase Management Dashboard",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node server.js"
+  },
+  "dependencies": {
+    "express": "^4.21.2"
+  }
+}
