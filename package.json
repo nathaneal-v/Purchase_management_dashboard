@@ -4,7 +4,7 @@
   "description": "ERP-style Purchase Management Dashboard",
   "main": "server.js",
   "engines": {
-    "node": "20.x"
+    "node": "22.x"
   },
   "scripts": {
     "start": "node server.js",
