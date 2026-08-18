@@ -5,10 +5,42 @@
       "runtime": "vercel-php"
     }
   },
-  "rewrites": [
+  "routes": [
     {
-      "source": "/backend/api/(.*)",
-      "destination": "/api/$1"
+      "src": "/api/(.*)",
+      "dest": "/api/$1"
+    },
+    {
+      "src": "/backend/api/(.*)",
+      "dest": "/api/$1"
+    },
+    {
+      "src": "/assets/(.*)",
+      "dest": "/assets/$1"
+    },
+    {
+      "src": "/index.html",
+      "dest": "/index.html"
+    },
+    {
+      "src": "/purchase-orders.html",
+      "dest": "/purchase-orders.html"
+    },
+    {
+      "src": "/purchase-order-form.html",
+      "dest": "/purchase-order-form.html"
+    },
+    {
+      "src": "/suppliers.html",
+      "dest": "/suppliers.html"
+    },
+    {
+      "src": "/items.html",
+      "dest": "/items.html"
+    },
+    {
+      "src": "/",
+      "dest": "/index.html"
     }
   ]
 }
